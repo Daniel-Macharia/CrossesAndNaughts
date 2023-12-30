@@ -14,26 +14,55 @@ public class SimpleReflexAgent {
         this.context = context;
     }
 
-    public int play()
+    public void play()
     {
         int id = 0;
         try
         {
             ArrayList<Integer> slots = InternalEnvironmentState.getEmptySlots();
 
-            int index = (int) Math.random( ) * slots.size();
+            if( slots.size() == 0 )
+            {
+                return;
+            }
+            //int index = (int) Math.random( ) * slots.size();
+            int index = (int) android.os.SystemClock.uptimeMillis() % slots.size();
 
             id = slots.get(index);
 
-            Toast.makeText(context, "Marked position " + id, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, index + "Marked position " + id, Toast.LENGTH_SHORT).show();
 
             MainActivity.unsetClickListener( context, "agent", id);
 
-        }catch ( Exception e )
+        }
+        catch ( Exception e )
         {
             Toast.makeText(context, "Error From Application: "+ e, Toast.LENGTH_SHORT).show();
         }
 
-        return id;
+
+    }
+}
+
+class GoalBasedAgent extends SimpleReflexAgent
+{
+    private Context context;
+    public GoalBasedAgent( Context context )
+    {
+        super( context );
+        this.context = context;
+    }
+
+    @Override
+    public void play()
+    {
+        try
+        {
+            Toast.makeText( context , "Goal agent playing...invoking simple reflex agent's play() method", Toast.LENGTH_SHORT).show();
+            super.play();
+        }catch( Exception e )
+        {
+            Toast.makeText(context, "Error from Application: " + e, Toast.LENGTH_SHORT).show();
+        }
     }
 }

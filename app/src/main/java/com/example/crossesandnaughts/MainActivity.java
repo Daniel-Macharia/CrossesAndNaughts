@@ -9,11 +9,18 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static SimpleReflexAgent agent;
     private static ImageView one, two, three, four, five, six, seven, eight, nine;
     //private Map<Integer, String> marks;
+
+    private ImageView menu;
+
+    private static Executor executor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
+
+            menu = findViewById( R.id.menu );
 
             one = findViewById( R.id.one );
             two = findViewById( R.id.two );
@@ -35,19 +44,72 @@ public class MainActivity extends AppCompatActivity {
             eight = findViewById( R.id.eight );
             nine = findViewById( R.id.nine );
 
+            menu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    createMenus();
+                }
+            });
+
             //initMap();
+            executor = Executors.newCachedThreadPool();
 
-            InternalEnvironmentState.init( MainActivity.this );
+            InternalEnvironmentState.context = MainActivity.this;
+            InternalEnvironmentState.init();
             InternalEnvironmentState.setUserMark("cross");
-            SimpleReflexAgent agent = new SimpleReflexAgent( MainActivity.this );
 
+            agent = new SimpleReflexAgent( MainActivity.this );
+
+            setClickListeners( MainActivity.this );
+
+
+
+        }catch( Exception e )
+        {
+            Toast.makeText(this, "Error from Application: " + e, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void createMenus()
+    {
+        Toast.makeText(this, "Clicked menus", Toast.LENGTH_SHORT).show();
+    }
+
+    public static void resetGame( Context context )
+    {
+        try
+        {
+            one.setImageResource( R.drawable.blank );
+            two.setImageResource( R.drawable.blank );
+            three.setImageResource( R.drawable.blank );
+
+            four.setImageResource( R.drawable.blank );
+            five.setImageResource( R.drawable.blank );
+            six.setImageResource( R.drawable.blank );
+
+            seven.setImageResource( R.drawable.blank );
+            eight.setImageResource( R.drawable.blank );
+            nine.setImageResource( R.drawable.blank );
+
+
+        }catch( Exception e )
+        {
+            Toast.makeText(context, "Error from Application: " + e , Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static void setClickListeners( Context context)
+    {
+        try
+        {
             one.setOnClickListener( new View.OnClickListener()
             {
                 @Override
                 public void onClick( View v )
                 {
-                    Toast.makeText( MainActivity.this, "Clicked one", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( MainActivity.this, "user", 1 );
+                    //Toast.makeText( context, "Clicked one", Toast.LENGTH_SHORT).show();
+                    unsetClickListener( context, "user", 1 );
                     agent.play();
                 }
             });
@@ -57,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    Toast.makeText( MainActivity.this, "Clicked two", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( MainActivity.this, "user", 2 );
+                    //Toast.makeText( context, "Clicked two", Toast.LENGTH_SHORT).show();
+                    unsetClickListener( context, "user", 2 );
                     agent.play();
                 }
             });
@@ -68,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    Toast.makeText( MainActivity.this, "Clicked three", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( MainActivity.this, "user", 3 );
+                    //Toast.makeText( context, "Clicked three", Toast.LENGTH_SHORT).show();
+                    unsetClickListener( context, "user", 3 );
                     agent.play();
                 }
             });
@@ -79,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    Toast.makeText( MainActivity.this, "Clicked four", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( MainActivity.this, "user", 4 );
+                    //Toast.makeText( context, "Clicked four", Toast.LENGTH_SHORT).show();
+                    unsetClickListener( context, "user", 4 );
                     agent.play();
                 }
             });
@@ -90,8 +152,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    Toast.makeText( MainActivity.this, "Clicked five", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( MainActivity.this, "user", 5 );
+                    //Toast.makeText( context, "Clicked five", Toast.LENGTH_SHORT).show();
+                    unsetClickListener( context, "user", 5 );
                     agent.play();
                 }
             });
@@ -101,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    Toast.makeText( MainActivity.this, "Clicked six", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( MainActivity.this, "user", 6 );
+                    //Toast.makeText( context, "Clicked six", Toast.LENGTH_SHORT).show();
+                    unsetClickListener( context, "user", 6 );
                     agent.play();
                 }
             });
@@ -112,8 +174,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    Toast.makeText( MainActivity.this, "Clicked seven", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( MainActivity.this, "user", 7 );
+                    //Toast.makeText( context, "Clicked seven", Toast.LENGTH_SHORT).show();
+                    unsetClickListener( context, "user", 7 );
                     agent.play();
                 }
             });
@@ -123,8 +185,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    Toast.makeText( MainActivity.this, "Clicked eight", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( MainActivity.this, "user", 8 );
+                    //Toast.makeText( context, "Clicked eight", Toast.LENGTH_SHORT).show();
+                    unsetClickListener( context, "user", 8 );
                     agent.play();
                 }
             });
@@ -134,34 +196,16 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    Toast.makeText( MainActivity.this, "Clicked nine", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( MainActivity.this, "user", 9 );
+                    //Toast.makeText( context, "Clicked nine", Toast.LENGTH_SHORT).show();
+                    unsetClickListener( context, "user", 9 );
                     agent.play();
                 }
             });
-
         }catch( Exception e )
         {
-            Toast.makeText(this, "Error: " + e, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Error from Application: " + e, Toast.LENGTH_SHORT).show();
         }
-
     }
-
-    /*
-    private void initMap()
-    {
-        marks.put( 1, "one");
-        marks.put( 2, "two");
-        marks.put( 3, "three");
-
-        marks.put( 4, "four");
-        marks.put( 5, "five");
-        marks.put( 6, "six");
-
-        marks.put( 7, "seven");
-        marks.put( 8, "eight");
-        marks.put( 9, "nine");
-    } */
 
     public static void unsetClickListener(Context context, String player, int id)
     {
@@ -182,7 +226,12 @@ public class MainActivity extends AppCompatActivity {
                     else
                         one.setImageResource( R.drawable.naught );
 
+                    //executor.execute(new Runnable() {
+                    //    @Override
+                    //    public void run() {
                     InternalEnvironmentState.update( context, player, id);
+                     //   }
+                    //});
                     break;
 
 
@@ -199,7 +248,12 @@ public class MainActivity extends AppCompatActivity {
                     else
                         two.setImageResource( R.drawable.naught );
 
+                    //executor.execute(new Runnable() {
+                    //    @Override
+                    //    public void run() {
                     InternalEnvironmentState.update( context, player, id);
+                    //   }
+                    //});
                     break;
 
 
@@ -216,7 +270,12 @@ public class MainActivity extends AppCompatActivity {
                     else
                         three.setImageResource( R.drawable.naught );
 
+                    //executor.execute(new Runnable() {
+                    //    @Override
+                    //    public void run() {
                     InternalEnvironmentState.update( context, player, id);
+                    //   }
+                    //});
                     break;
 
 
@@ -233,7 +292,12 @@ public class MainActivity extends AppCompatActivity {
                     else
                         four.setImageResource( R.drawable.naught );
 
+                    //executor.execute(new Runnable() {
+                    //    @Override
+                    //    public void run() {
                     InternalEnvironmentState.update( context, player, id);
+                    //   }
+                    //});
                     break;
 
 
@@ -250,7 +314,12 @@ public class MainActivity extends AppCompatActivity {
                     else
                         five.setImageResource( R.drawable.naught );
 
+                    //executor.execute(new Runnable() {
+                    //    @Override
+                    //    public void run() {
                     InternalEnvironmentState.update( context, player, id);
+                    //   }
+                    //});
                     break;
 
 
@@ -267,7 +336,12 @@ public class MainActivity extends AppCompatActivity {
                     else
                         six.setImageResource( R.drawable.naught );
 
+                    //executor.execute(new Runnable() {
+                    //    @Override
+                    //    public void run() {
                     InternalEnvironmentState.update( context, player, id);
+                    //   }
+                    //});
                     break;
 
 
@@ -284,7 +358,12 @@ public class MainActivity extends AppCompatActivity {
                     else
                         seven.setImageResource( R.drawable.naught );
 
+                    //executor.execute(new Runnable() {
+                    //    @Override
+                    //    public void run() {
                     InternalEnvironmentState.update( context, player, id);
+                    //   }
+                    //});
                     break;
 
 
@@ -301,7 +380,12 @@ public class MainActivity extends AppCompatActivity {
                     else
                         eight.setImageResource( R.drawable.naught );
 
+                    //executor.execute(new Runnable() {
+                    //    @Override
+                    //    public void run() {
                     InternalEnvironmentState.update( context, player, id);
+                    //   }
+                    //});
                     break;
 
 
@@ -318,7 +402,12 @@ public class MainActivity extends AppCompatActivity {
                     else
                         nine.setImageResource( R.drawable.naught );
 
+                    //executor.execute(new Runnable() {
+                    //    @Override
+                    //    public void run() {
                     InternalEnvironmentState.update( context, player, id);
+                    //   }
+                    //});
                     break;
 
             }

@@ -1,7 +1,10 @@
 package com.example.crossesandnaughts;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.util.Pair;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -9,15 +12,14 @@ import java.util.Collections;
 import java.util.Map;
 
 public class InternalEnvironmentState {
-    private static Context context;
+    public static Context context;
 
     private static MyMap opponent = new MyMap();
 
     private static String[][] marks = new String[3][3];
 
-    public static void init( Context context)
+    public static void init()
     {
-        context = context;
        try
        {
            for( int r = 0; r < 3; r++)
@@ -87,10 +89,7 @@ public class InternalEnvironmentState {
 
             marks[ point.getRow()][point.getCol()] = opponent.get( player );
 
-            if( isOver() )
-            {
-                Toast.makeText( context, "GameOver!", Toast.LENGTH_LONG).show();
-            }
+            gameOver( context );
         }catch( Exception e )
         {
             Toast.makeText(context, "Error From Application: "+ e, Toast.LENGTH_SHORT).show();
@@ -128,7 +127,7 @@ public class InternalEnvironmentState {
             int userForwardDiagonal = 0, userReverseDiagonal = 0;
             int agentForwardDiagonal = 0, agentReverseDiagonal = 0;
 
-            for( int r = 0, invertR = 3; r < marks.length; r++, invertR--)
+            for( int r = 0, invertR = 2; r < marks.length; r++, invertR--)
             {
                 int userHorizontalMarks = 0, userVerticalMarks = 0;
                 int agentHorizontalMarks = 0, agentVerticalMarks = 0;
@@ -166,11 +165,11 @@ public class InternalEnvironmentState {
 
                     if( invertR == c )
                     {
-                        if( marks[invertR][c].equals( opponent.get("user")) )
+                        if( marks[r][c].equals( opponent.get("user")) )
                         {
                             userReverseDiagonal++;
                         }
-                        else if( marks[invertR][c].equals( opponent.get("agent")) )
+                        else if( marks[r][c].equals( opponent.get("agent")) )
                         {
                             agentReverseDiagonal++;
                         }
@@ -195,6 +194,45 @@ public class InternalEnvironmentState {
         }
 
         return false;
+    }
+
+    public static void gameOver( Context context )
+    {
+        try
+        {
+            if( isOver() || getEmptySlots().size() == 0 )
+            {
+                //Toast.makeText(context, "Game Over!", Toast.LENGTH_LONG).show();
+
+                //android.os.SystemClock.sleep( 2000 );
+                Dialog d = new Dialog( context );
+                TextView tv = new TextView( context );
+                tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                tv.setTextColor( context.getResources().getColor(R.color.black) );
+                tv.setText( "Game Over!");
+                d.setContentView( tv );
+                d.show();
+
+                refresh();
+            }
+        }catch( Exception e )
+        {
+            Toast.makeText(context, "Error from Application: " + e, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static void refresh()
+    {
+        try
+        {
+            init();
+
+            MainActivity.resetGame( context );
+            MainActivity.setClickListeners( context );
+        }catch( Exception e )
+        {
+            Toast.makeText(context, "Error from Application: " + e, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
