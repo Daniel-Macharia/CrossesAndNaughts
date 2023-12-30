@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">CrossesAndNaughts</string>
+
+    <string name="mark1">one</string>
+    <string name="mark2">two</string>
+    <string name="mark3">three</string>
+
+    <string name="mark4">four</string>
+    <string name="mark5">five</string>
+    <string name="mark6">six</string>
+
+    <string name="mark7">seven</string>
+    <string name="mark8">eight</string>
+    <string name="mark9">nine</string>
+</resources>
