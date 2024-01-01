@@ -1,20 +1,17 @@
 package com.example.crossesandnaughts;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.util.Pair;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
 
 public class InternalEnvironmentState {
     public static Context context;
 
     private static MyMap opponent = new MyMap();
+
+    public static boolean userWon = false, agentWon = false;
 
     private static String[][] marks = new String[3][3];
 
@@ -29,6 +26,9 @@ public class InternalEnvironmentState {
                    marks[r][c] = new String("blank");
                }
            }
+
+           userWon = false;
+           agentWon = false;
        }catch( Exception e )
        {
            Toast.makeText(context, "Error From Application: "+ e, Toast.LENGTH_SHORT).show();
@@ -177,15 +177,29 @@ public class InternalEnvironmentState {
 
                 }
 
-                if( userHorizontalMarks == 3 || userVerticalMarks == 3 || agentHorizontalMarks == 3 || agentVerticalMarks == 3)
+                if( userHorizontalMarks == 3 || userVerticalMarks == 3 )
                 {
+                    userWon = true;
+                    return true;
+                }
+
+                if( agentHorizontalMarks == 3 || agentVerticalMarks == 3 )
+                {
+                    agentWon = true;
                     return true;
                 }
             }
 
 
-            if( userForwardDiagonal == 3 || userReverseDiagonal == 3  || agentForwardDiagonal == 3 || agentReverseDiagonal == 3)
+            if( userForwardDiagonal == 3 || userReverseDiagonal == 3 )
             {
+                userWon = true;
+                return true;
+            }
+
+            if( agentForwardDiagonal == 3 || agentReverseDiagonal == 3)
+            {
+                agentWon = true;
                 return true;
             }
         }catch( Exception e )
@@ -196,29 +210,20 @@ public class InternalEnvironmentState {
         return false;
     }
 
-    public static void gameOver( Context context )
+    public static boolean gameOver( Context context )
     {
         try
         {
             if( isOver() || getEmptySlots().size() == 0 )
             {
-                //Toast.makeText(context, "Game Over!", Toast.LENGTH_LONG).show();
-
-                //android.os.SystemClock.sleep( 2000 );
-                Dialog d = new Dialog( context );
-                TextView tv = new TextView( context );
-                tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
-                tv.setTextColor( context.getResources().getColor(R.color.black) );
-                tv.setText( "Game Over!");
-                d.setContentView( tv );
-                d.show();
-
-                refresh();
+                return true;
             }
         }catch( Exception e )
         {
             Toast.makeText(context, "Error from Application: " + e, Toast.LENGTH_SHORT).show();
         }
+
+        return false;
     }
 
     public static void refresh()
@@ -228,6 +233,7 @@ public class InternalEnvironmentState {
             init();
 
             MainActivity.resetGame( context );
+
             MainActivity.setClickListeners( context );
         }catch( Exception e )
         {

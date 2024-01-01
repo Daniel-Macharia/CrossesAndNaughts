@@ -1,10 +1,12 @@
 package com.example.crossesandnaughts;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class SimpleReflexAgent {
 
@@ -25,14 +27,36 @@ public class SimpleReflexAgent {
             {
                 return;
             }
-            //int index = (int) Math.random( ) * slots.size();
             int index = (int) android.os.SystemClock.uptimeMillis() % slots.size();
 
             id = slots.get(index);
 
-            //Toast.makeText(context, index + "Marked position " + id, Toast.LENGTH_SHORT).show();
-
             MainActivity.unsetClickListener( context, "agent", id);
+            InternalEnvironmentState.update( context, "agent", id);
+
+            if( InternalEnvironmentState.gameOver( context ) )
+            {
+                String s = "";
+                if( InternalEnvironmentState.userWon )
+                    s += "You Win!";
+                else
+                    s += "You Loose!";
+                Dialog d = new Dialog( context );
+                TextView tv = new TextView( context );
+                tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                tv.setTextColor( context.getResources().getColor(R.color.black) );
+                tv.setText( "Game Over!\n\n" + s );
+                d.setContentView( tv );
+                d.show();
+
+                d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog){
+                        InternalEnvironmentState.refresh();
+                    }
+                });
+            }
+
 
         }
         catch ( Exception e )

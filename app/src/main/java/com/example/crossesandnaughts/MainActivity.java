@@ -2,25 +2,26 @@ package com.example.crossesandnaughts;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
     private static SimpleReflexAgent agent;
     private static ImageView one, two, three, four, five, six, seven, eight, nine;
-    //private Map<Integer, String> marks;
 
     private ImageView menu;
-
-    private static Executor executor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +48,9 @@ public class MainActivity extends AppCompatActivity {
             menu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    createMenus();
+                    createMenus( v );
                 }
             });
-
-            //initMap();
-            executor = Executors.newCachedThreadPool();
 
             InternalEnvironmentState.context = MainActivity.this;
             InternalEnvironmentState.init();
@@ -71,9 +69,78 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void createMenus()
+    private void createMenus( View view)
     {
         Toast.makeText(this, "Clicked menus", Toast.LENGTH_SHORT).show();
+
+        PopupMenu menus = new PopupMenu( view.getContext(), view);
+        menus.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                int id = item.getItemId();
+
+                if( id == R.id.item_level )
+                {
+                    Toast.makeText(MainActivity.this, "Clicked level", Toast.LENGTH_SHORT).show();
+                    PopupMenu sub = new PopupMenu( view.getContext(), view );
+
+                   sub.getMenu().add("Easy").setCheckable(true).setChecked(true);
+                   sub.getMenu().add("Normal").setCheckable(true);
+                   sub.getMenu().add("Hard").setCheckable(true);
+
+                   sub.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                       @Override
+                       public boolean onMenuItemClick(MenuItem item) {
+
+                           String title = item.getTitle().toString();
+
+                           if( title.equals("Easy") )
+                           {
+                               Toast.makeText(MainActivity.this, "Clicked Easy", Toast.LENGTH_SHORT).show();
+                               return true;
+                           }
+                           else if( title.equals("Normal"))
+                           {
+                               Toast.makeText(MainActivity.this, "Clicked Normal", Toast.LENGTH_SHORT).show();
+                               return true;
+                           }
+                           else if( title.equals("Hard"))
+                           {
+                               Toast.makeText(MainActivity.this, "Clicked Hard", Toast.LENGTH_SHORT).show();
+                               return true;
+                           }
+
+                           return true;
+                       }
+                   });
+
+                   sub.show();
+
+                    return true;
+                }
+                else if( id == R.id.item_help )
+                {
+                    Toast.makeText(MainActivity.this, "clicked help", Toast.LENGTH_SHORT).show();
+                    Intent helpIntent = new Intent( MainActivity.this, Help.class );
+                    startActivity( helpIntent );
+                    return true;
+                }
+                else if( id == R.id.item_email )
+                {
+                    Toast.makeText(MainActivity.this, "clicked email", Toast.LENGTH_SHORT).show();
+                    Intent emailIntent = new Intent( MainActivity.this, EmailDevs.class );
+                    startActivity( emailIntent );
+                    return true;
+                }
+
+                return false;
+
+            }
+        });
+
+        menus.inflate( R.menu.main_menus );
+        menus.show();
     }
 
     public static void resetGame( Context context )
@@ -108,9 +175,46 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    //Toast.makeText( context, "Clicked one", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( context, "user", 1 );
-                    agent.play();
+                    try
+                    {
+                        unsetClickListener( context, "user", 1);
+                        InternalEnvironmentState.update( context, "user", 1);
+
+                        if( InternalEnvironmentState.gameOver( context ) )
+                        {
+                            String s = "";
+                            if( InternalEnvironmentState.userWon )
+                                s += "You Win!";
+                            else if( InternalEnvironmentState.agentWon )
+                                s += "You Loose!";
+                            else
+                                s += "We Draw!";
+
+                            Dialog d = new Dialog( context );
+                            TextView tv = new TextView( context );
+                            tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                            tv.setTextColor( context.getResources().getColor(R.color.black) );
+                            tv.setText( "Game Over!\n\n" + s );
+                            d.setContentView( tv );
+                            d.show();
+
+                            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog){
+                                    InternalEnvironmentState.refresh();
+                                    agent.play();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            agent.play();
+                        }
+                    }
+                    catch( Exception e )
+                    {
+                        Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -119,9 +223,45 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    //Toast.makeText( context, "Clicked two", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( context, "user", 2 );
-                    agent.play();
+                    try
+                    {
+                        unsetClickListener( context, "user", 2);
+                        InternalEnvironmentState.update( context, "user", 2);
+
+                        if( InternalEnvironmentState.gameOver( context ) )
+                        {
+                            String s = "";
+                            if( InternalEnvironmentState.userWon )
+                                s += "You Win!";
+                            else if( InternalEnvironmentState.agentWon )
+                                s += "You Loose!";
+                            else
+                                s += "We Draw!";
+
+                            Dialog d = new Dialog( context );
+                            TextView tv = new TextView( context );
+                            tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                            tv.setTextColor( context.getResources().getColor(R.color.black) );
+                            tv.setText( "Game Over!\n\n" + s );
+                            d.setContentView( tv );
+                            d.show();
+
+                            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog){
+                                    InternalEnvironmentState.refresh();
+                                    agent.play();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            agent.play();
+                        }
+                    }catch( Exception e )
+                    {
+                        Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -130,9 +270,45 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    //Toast.makeText( context, "Clicked three", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( context, "user", 3 );
-                    agent.play();
+                    try
+                    {
+                        unsetClickListener( context, "user", 3);
+                        InternalEnvironmentState.update( context, "user", 3);
+
+                        if( InternalEnvironmentState.gameOver( context ) )
+                        {
+                            String s = "";
+                            if( InternalEnvironmentState.userWon )
+                                s += "You Win!";
+                            else if( InternalEnvironmentState.agentWon )
+                                s += "You Loose!";
+                            else
+                                s += "We Draw!";
+
+                            Dialog d = new Dialog( context );
+                            TextView tv = new TextView( context );
+                            tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                            tv.setTextColor( context.getResources().getColor(R.color.black) );
+                            tv.setText( "Game Over!\n\n" + s );
+                            d.setContentView( tv );
+                            d.show();
+
+                            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog){
+                                    InternalEnvironmentState.refresh();
+                                    agent.play();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            agent.play();
+                        }
+                    }catch( Exception e )
+                    {
+                        Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -141,9 +317,45 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    //Toast.makeText( context, "Clicked four", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( context, "user", 4 );
-                    agent.play();
+                    try
+                    {
+                        unsetClickListener( context, "user", 4);
+                        InternalEnvironmentState.update( context, "user", 4);
+
+                        if( InternalEnvironmentState.gameOver( context ) )
+                        {
+                            String s = "";
+                            if( InternalEnvironmentState.userWon )
+                                s += "You Win!";
+                            else if( InternalEnvironmentState.agentWon )
+                                s += "You Loose!";
+                            else
+                                s += "We Draw!";
+
+                            Dialog d = new Dialog( context );
+                            TextView tv = new TextView( context );
+                            tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                            tv.setTextColor( context.getResources().getColor(R.color.black) );
+                            tv.setText( "Game Over!\n\n" + s );
+                            d.setContentView( tv );
+                            d.show();
+
+                            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog){
+                                    InternalEnvironmentState.refresh();
+                                    agent.play();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            agent.play();
+                        }
+                    }catch( Exception e )
+                    {
+                        Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -152,9 +364,45 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    //Toast.makeText( context, "Clicked five", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( context, "user", 5 );
-                    agent.play();
+                    try
+                    {
+                        unsetClickListener( context, "user", 5);
+                        InternalEnvironmentState.update( context, "user", 5);
+
+                        if( InternalEnvironmentState.gameOver( context ) )
+                        {
+                            String s = "";
+                            if( InternalEnvironmentState.userWon )
+                                s += "You Win!";
+                            else if( InternalEnvironmentState.agentWon )
+                                s += "You Loose!";
+                            else
+                                s += "We Draw!";
+
+                            Dialog d = new Dialog( context );
+                            TextView tv = new TextView( context );
+                            tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                            tv.setTextColor( context.getResources().getColor(R.color.black) );
+                            tv.setText( "Game Over!\n\n" + s );
+                            d.setContentView( tv );
+                            d.show();
+
+                            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog){
+                                    InternalEnvironmentState.refresh();
+                                    agent.play();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            agent.play();
+                        }
+                    }catch( Exception e )
+                    {
+                        Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -163,9 +411,45 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    //Toast.makeText( context, "Clicked six", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( context, "user", 6 );
-                    agent.play();
+                    try
+                    {
+                        unsetClickListener( context, "user", 6);
+                        InternalEnvironmentState.update( context, "user", 6);
+
+                        if( InternalEnvironmentState.gameOver( context ) )
+                        {
+                            String s = "";
+                            if( InternalEnvironmentState.userWon )
+                                s += "You Win!";
+                            else if( InternalEnvironmentState.agentWon )
+                                s += "You Loose!";
+                            else
+                                s += "We Draw!";
+
+                            Dialog d = new Dialog( context );
+                            TextView tv = new TextView( context );
+                            tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                            tv.setTextColor( context.getResources().getColor(R.color.black) );
+                            tv.setText( "Game Over!\n\n" + s );
+                            d.setContentView( tv );
+                            d.show();
+
+                            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog){
+                                    InternalEnvironmentState.refresh();
+                                    agent.play();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            agent.play();
+                        }
+                    }catch( Exception e )
+                    {
+                        Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -174,9 +458,45 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    //Toast.makeText( context, "Clicked seven", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( context, "user", 7 );
-                    agent.play();
+                    try
+                    {
+                        unsetClickListener( context, "user", 7);
+                        InternalEnvironmentState.update( context, "user", 7);
+
+                        if( InternalEnvironmentState.gameOver( context ) )
+                        {
+                            String s = "";
+                            if( InternalEnvironmentState.userWon )
+                                s += "You Win!";
+                            else if( InternalEnvironmentState.agentWon )
+                                s += "You Loose!";
+                            else
+                                s += "We Draw!";
+
+                            Dialog d = new Dialog( context );
+                            TextView tv = new TextView( context );
+                            tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                            tv.setTextColor( context.getResources().getColor(R.color.black) );
+                            tv.setText( "Game Over!\n\n" + s );
+                            d.setContentView( tv );
+                            d.show();
+
+                            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog){
+                                    InternalEnvironmentState.refresh();
+                                    agent.play();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            agent.play();
+                        }
+                    }catch( Exception e )
+                    {
+                        Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -185,9 +505,45 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    //Toast.makeText( context, "Clicked eight", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( context, "user", 8 );
-                    agent.play();
+                    try
+                    {
+                        unsetClickListener( context, "user", 8);
+                        InternalEnvironmentState.update( context, "user", 8);
+
+                        if( InternalEnvironmentState.gameOver( context ) )
+                        {
+                            String s = "";
+                            if( InternalEnvironmentState.userWon )
+                                s += "You Win!";
+                            else if( InternalEnvironmentState.agentWon )
+                                s += "You Loose!";
+                            else
+                                s += "We Draw!";
+
+                            Dialog d = new Dialog( context );
+                            TextView tv = new TextView( context );
+                            tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                            tv.setTextColor( context.getResources().getColor(R.color.black) );
+                            tv.setText( "Game Over!\n\n" + s );
+                            d.setContentView( tv );
+                            d.show();
+
+                            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog){
+                                    InternalEnvironmentState.refresh();
+                                    agent.play();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            agent.play();
+                        }
+                    }catch( Exception e )
+                    {
+                        Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -196,9 +552,45 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick( View v )
                 {
-                    //Toast.makeText( context, "Clicked nine", Toast.LENGTH_SHORT).show();
-                    unsetClickListener( context, "user", 9 );
-                    agent.play();
+                    try
+                    {
+                        unsetClickListener( context, "user", 9);
+                        InternalEnvironmentState.update( context, "user", 9);
+
+                        if( InternalEnvironmentState.gameOver( context ) )
+                        {
+                            String s = "";
+                            if( InternalEnvironmentState.userWon )
+                                s += "You Win!";
+                            else if( InternalEnvironmentState.agentWon )
+                                s += "You Loose!";
+                            else
+                                s += "We Draw!";
+
+                            Dialog d = new Dialog( context );
+                            TextView tv = new TextView( context );
+                            tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
+                            tv.setTextColor( context.getResources().getColor(R.color.black) );
+                            tv.setText( "Game Over!\n\n" + s );
+                            d.setContentView( tv );
+                            d.show();
+
+                            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog){
+                                    InternalEnvironmentState.refresh();
+                                    agent.play();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            agent.play();
+                        }
+                    }catch( Exception e )
+                    {
+                        Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }catch( Exception e )
@@ -207,8 +599,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static void unsetClickListener(Context context, String player, int id)
+    public static void unsetClickListener( Context context, String player, int id)
     {
+        Handler handler = new Handler( Looper.getMainLooper() );
 
         try
         {
@@ -221,17 +614,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    if( InternalEnvironmentState.getPlayerMark( player ).equals("cross"))
-                        one.setImageResource( R.drawable.cross );
-                    else
-                        one.setImageResource( R.drawable.naught );
+                    one.setImageResource( InternalEnvironmentState.getPlayerMark( player ).equals("cross") ? R.drawable.cross : R.drawable.naught );
 
-                    //executor.execute(new Runnable() {
-                    //    @Override
-                    //    public void run() {
-                    InternalEnvironmentState.update( context, player, id);
-                     //   }
-                    //});
                     break;
 
 
@@ -243,17 +627,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    if( InternalEnvironmentState.getPlayerMark( player ).equals("cross"))
-                        two.setImageResource( R.drawable.cross );
-                    else
-                        two.setImageResource( R.drawable.naught );
+                    two.setImageResource( InternalEnvironmentState.getPlayerMark( player ).equals("cross") ? R.drawable.cross : R.drawable.naught );
 
-                    //executor.execute(new Runnable() {
-                    //    @Override
-                    //    public void run() {
-                    InternalEnvironmentState.update( context, player, id);
-                    //   }
-                    //});
                     break;
 
 
@@ -265,17 +640,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    if( InternalEnvironmentState.getPlayerMark( player ).equals("cross"))
-                        three.setImageResource( R.drawable.cross );
-                    else
-                        three.setImageResource( R.drawable.naught );
+                    three.setImageResource( InternalEnvironmentState.getPlayerMark( player ).equals("cross") ? R.drawable.cross : R.drawable.naught );
 
-                    //executor.execute(new Runnable() {
-                    //    @Override
-                    //    public void run() {
-                    InternalEnvironmentState.update( context, player, id);
-                    //   }
-                    //});
                     break;
 
 
@@ -287,17 +653,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    if( InternalEnvironmentState.getPlayerMark( player ).equals("cross"))
-                        four.setImageResource( R.drawable.cross );
-                    else
-                        four.setImageResource( R.drawable.naught );
+                    four.setImageResource( InternalEnvironmentState.getPlayerMark( player ).equals("cross") ? R.drawable.cross : R.drawable.naught );
 
-                    //executor.execute(new Runnable() {
-                    //    @Override
-                    //    public void run() {
-                    InternalEnvironmentState.update( context, player, id);
-                    //   }
-                    //});
                     break;
 
 
@@ -309,17 +666,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    if( InternalEnvironmentState.getPlayerMark( player ).equals("cross"))
-                        five.setImageResource( R.drawable.cross );
-                    else
-                        five.setImageResource( R.drawable.naught );
+                    five.setImageResource( InternalEnvironmentState.getPlayerMark( player ).equals("cross") ? R.drawable.cross : R.drawable.naught );
 
-                    //executor.execute(new Runnable() {
-                    //    @Override
-                    //    public void run() {
-                    InternalEnvironmentState.update( context, player, id);
-                    //   }
-                    //});
                     break;
 
 
@@ -331,17 +679,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    if( InternalEnvironmentState.getPlayerMark( player ).equals("cross"))
-                        six.setImageResource( R.drawable.cross );
-                    else
-                        six.setImageResource( R.drawable.naught );
+                    six.setImageResource( InternalEnvironmentState.getPlayerMark( player ).equals("cross") ? R.drawable.cross : R.drawable.naught );
 
-                    //executor.execute(new Runnable() {
-                    //    @Override
-                    //    public void run() {
-                    InternalEnvironmentState.update( context, player, id);
-                    //   }
-                    //});
                     break;
 
 
@@ -353,17 +692,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    if( InternalEnvironmentState.getPlayerMark( player ).equals("cross"))
-                        seven.setImageResource( R.drawable.cross );
-                    else
-                        seven.setImageResource( R.drawable.naught );
+                    seven.setImageResource( InternalEnvironmentState.getPlayerMark( player ).equals("cross") ? R.drawable.cross : R.drawable.naught );
 
-                    //executor.execute(new Runnable() {
-                    //    @Override
-                    //    public void run() {
-                    InternalEnvironmentState.update( context, player, id);
-                    //   }
-                    //});
                     break;
 
 
@@ -375,17 +705,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    if( InternalEnvironmentState.getPlayerMark( player ).equals("cross"))
-                        eight.setImageResource( R.drawable.cross );
-                    else
-                        eight.setImageResource( R.drawable.naught );
+                    eight.setImageResource( InternalEnvironmentState.getPlayerMark( player ).equals("cross") ? R.drawable.cross : R.drawable.naught );
 
-                    //executor.execute(new Runnable() {
-                    //    @Override
-                    //    public void run() {
-                    InternalEnvironmentState.update( context, player, id);
-                    //   }
-                    //});
                     break;
 
 
@@ -397,17 +718,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    if( InternalEnvironmentState.getPlayerMark( player ).equals("cross"))
-                        nine.setImageResource( R.drawable.cross );
-                    else
-                        nine.setImageResource( R.drawable.naught );
+                    nine.setImageResource( InternalEnvironmentState.getPlayerMark( player ).equals("cross") ? R.drawable.cross : R.drawable.naught );
 
-                    //executor.execute(new Runnable() {
-                    //    @Override
-                    //    public void run() {
-                    InternalEnvironmentState.update( context, player, id);
-                    //   }
-                    //});
                     break;
 
             }
@@ -418,3 +730,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
+
