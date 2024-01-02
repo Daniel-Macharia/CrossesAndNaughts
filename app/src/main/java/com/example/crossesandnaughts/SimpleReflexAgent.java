@@ -3,6 +3,7 @@ package com.example.crossesandnaughts;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,21 +32,39 @@ public class SimpleReflexAgent {
 
             id = slots.get(index);
 
+            updateAndCheckIfGameIsOver( context, id);
+
+
+        }
+        catch ( Exception e )
+        {
+            Toast.makeText(context, "Error From Application: "+ e, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void updateAndCheckIfGameIsOver( Context context, int id )
+    {
+        try
+        {
             MainActivity.unsetClickListener( context, "agent", id);
             InternalEnvironmentState.update( context, "agent", id);
 
             if( InternalEnvironmentState.gameOver( context ) )
             {
-                String s = "";
+                String s = "Game Over!\n\n";
                 if( InternalEnvironmentState.userWon )
                     s += "You Win!";
-                else
+                else if( InternalEnvironmentState.agentWon )
                     s += "You Loose!";
+                else
+                    s += "We Draw!";
+
                 Dialog d = new Dialog( context );
                 TextView tv = new TextView( context );
                 tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
                 tv.setTextColor( context.getResources().getColor(R.color.black) );
-                tv.setText( "Game Over!\n\n" + s );
+                tv.setText( s );
                 d.setContentView( tv );
                 d.show();
 
@@ -56,22 +75,252 @@ public class SimpleReflexAgent {
                     }
                 });
             }
-
-
-        }
-        catch ( Exception e )
+        }catch( Exception e )
         {
-            Toast.makeText(context, "Error From Application: "+ e, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Error from application: " + e , Toast.LENGTH_SHORT).show();
         }
+    }
+}
 
+class Possible
+{
+    public int id1;
+    public int id2;
 
+    public Possible( int id1, int id2 )
+    {
+        this.id1 = id1;
+        this.id2 = id2;
     }
 }
 
 class GoalBasedAgent extends SimpleReflexAgent
 {
     private Context context;
+    private ArrayList<Possible> possibleWins;
     public GoalBasedAgent( Context context )
+    {
+        super( context );
+        this.context = context;
+    }
+
+    public boolean isBlank( int id )
+    {
+        Position p = InternalEnvironmentState.getPosition( id );
+
+        if( InternalEnvironmentState.marks[ p.getRow()][p.getCol()].equals("blank") )
+            return true;
+
+        return false;
+    }
+
+    public boolean areAligned( int id1, int id2 )
+    {
+        Position p1 = InternalEnvironmentState.getPosition( id1 );
+        Position p2 = InternalEnvironmentState.getPosition( id2 );
+
+        if( p1.getRow() == p2.getRow() )
+            return true;
+        else if( p1.getCol() == p2.getCol() )
+            return true;
+        else if( ( p2.getRow() - p1.getRow() ) == ( p2.getCol() - p1.getCol() ) )
+            return true;
+        else if( ( p2.getRow() - p1.getRow() ) == ( p1.getCol() - p2.getCol() ) )
+            return true;
+
+        return false;
+    }
+
+    public int getThird( int id1, int id2 )
+    {
+        Position p1 = InternalEnvironmentState.getPosition( id1 );
+        Position p2 = InternalEnvironmentState.getPosition( id2 );
+
+        if( p1.getRow() == p2.getRow() )
+        {
+            if( Math.abs(p1.getCol() - p2.getCol()) == 1 )
+            {
+                if( p1.getCol() < p2.getCol() && p2.getCol() < 2)
+                {
+                    return InternalEnvironmentState.getId( new Position( p1.getRow(), 2));
+                }
+                else if( p2.getCol() < p1.getCol() && p1.getCol() < 2)
+                    return InternalEnvironmentState.getId( new Position( p1.getRow(), 2));
+                else
+                    return InternalEnvironmentState.getId( new Position( p1.getRow(), 0));
+            }
+            else
+                return InternalEnvironmentState.getId( new Position( p1.getRow(), 1));
+        }
+        else if( p1.getCol() == p2.getCol() )
+        {
+            if( Math.abs( p1.getRow() - p2.getRow() ) == 1)
+            {
+                if( p1.getRow() < p2.getRow() && p2.getRow() < 2)
+                    return InternalEnvironmentState.getId( new Position( 2, p1.getCol()));
+                else if( p2.getRow() < p1.getRow() && p1.getRow() < 2 )
+                    return InternalEnvironmentState.getId( new Position( 2, p1.getCol()));
+                else
+                    return InternalEnvironmentState.getId( new Position( 0, p1.getCol()));
+            }
+            else
+                return InternalEnvironmentState.getId( new Position( 1, p1.getCol()));
+        }
+        else if( p1.getRow() - p2.getRow() == p1.getCol() - p2.getCol() )
+        {
+            if( Math.abs( p1.getRow() - p2.getRow()) == 1 )
+            {
+                if( p1.getCol() < p2.getCol() && p2.getCol() < 2)
+                    return InternalEnvironmentState.getId( new Position( 2, 2) );
+                else if( p2.getCol() < p1.getCol() && p1.getCol() < 2 )
+                    return InternalEnvironmentState.getId( new Position( 2, 2) );
+                else
+                    return InternalEnvironmentState.getId( new Position( 0, 0) );
+            }
+            else
+                return InternalEnvironmentState.getId( new Position( 1, 1) );
+        }
+        else if( p1.getRow() - p2.getRow() == p2.getCol() - p1.getCol() )
+        {
+            if( Math.abs( p1.getRow() - p2.getRow()) == 1 )
+            {
+                if( p1.getCol() < p2.getCol() && p2.getCol() < 2)
+                    return InternalEnvironmentState.getId( new Position( 0, 2) );
+                else if( p2.getCol() < p1.getCol() && p1.getCol() < 2 )
+                    return InternalEnvironmentState.getId( new Position( 0, 2) );
+                else
+                    return InternalEnvironmentState.getId( new Position( 2, 0) );
+            }
+            else
+                return InternalEnvironmentState.getId( new Position( 1, 1) );
+        }
+
+        return -1;
+    }
+    public void getPossibleWins()
+    {
+        try
+        {
+            possibleWins = new ArrayList<Possible>();
+
+            ArrayList<Integer> list = new ArrayList<>();
+
+            for( int r = 0; r < InternalEnvironmentState.marks.length; r++)
+            {
+                for( int c = 0; c < InternalEnvironmentState.marks[r].length; c++)
+                {
+                    if( InternalEnvironmentState.marks[r][c].equals( InternalEnvironmentState.getPlayerMark("agent") ) )
+                        list.add( InternalEnvironmentState.getId( new Position( r, c) ) );
+
+                }
+            }
+
+            for( int id1 : list )
+            {
+                for( int id2 : list )
+                {
+                    if( id1 == id2 )
+                        continue;
+
+                    if( areAligned( id1, id2 ) && isBlank( getThird( id1, id2 ) ) )
+                    {
+                        possibleWins.add( new Possible( id1, id2) );
+                    }
+
+                }
+            }
+        }catch( Exception e )
+        {
+            Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public ArrayList<Integer> getMarks()
+    {
+        ArrayList<Integer> marks = new ArrayList<>();
+        String agentMark = InternalEnvironmentState.getPlayerMark( "agent" );
+        for( int r = 0; r < InternalEnvironmentState.marks.length; r++)
+        {
+            for( int c = 0; c < InternalEnvironmentState.marks[r].length; c++)
+            {
+                if( InternalEnvironmentState.marks[r][c].equals( agentMark ) )
+                {
+                    marks.add( InternalEnvironmentState.getId( new Position( r, c ) ) );
+                }
+            }
+        }
+
+        return marks;
+    }
+
+    public int getNext( int firstId )
+    {
+        for( int i = 1; i <= 9; i++)
+        {
+            if( firstId == i )
+                continue;
+
+            if( isBlank(i) && areAligned( firstId, i ) && isBlank( getThird( firstId, i) ) )
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    @Override
+    public void play()
+    {
+        try
+        {
+            getPossibleWins();
+            ArrayList<Integer> agentMarks = getMarks();
+
+            if( possibleWins.size() > 0 )
+            {
+                int id = -1;
+                for( Possible p : possibleWins )
+                {
+                    id = getThird( p.id1, p.id2 );
+                    if( isBlank( id ) )
+                        break;
+                }
+
+                updateAndCheckIfGameIsOver( context, id);
+            }
+            else if( agentMarks.size() > 0 )
+            {
+                int id = -1;
+
+                for( int i : agentMarks )
+                {
+                    id = getNext( i );
+                    if( isBlank( id ) )
+                        break;
+                }
+
+                updateAndCheckIfGameIsOver( context, id);
+            }
+            else
+            {
+                super.play();
+            }
+
+        }catch( Exception e )
+        {
+            Toast.makeText(context, "Error from Application: " + e, Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+
+
+class UtilityAgent extends GoalBasedAgent
+{
+    private Context context;
+    public UtilityAgent( Context context )
     {
         super( context );
         this.context = context;
@@ -82,7 +331,8 @@ class GoalBasedAgent extends SimpleReflexAgent
     {
         try
         {
-            Toast.makeText( context , "Goal agent playing...invoking simple reflex agent's play() method", Toast.LENGTH_SHORT).show();
+            Toast.makeText( context , "Utility agent playing...invoking goal agent's play() method", Toast.LENGTH_SHORT).show();
+
             super.play();
         }catch( Exception e )
         {

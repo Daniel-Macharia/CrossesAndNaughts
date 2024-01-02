@@ -13,7 +13,7 @@ public class InternalEnvironmentState {
 
     public static boolean userWon = false, agentWon = false;
 
-    private static String[][] marks = new String[3][3];
+    public static String[][] marks = new String[3][3];
 
     public static void init()
     {

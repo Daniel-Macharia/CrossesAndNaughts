@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -98,16 +99,22 @@ public class MainActivity extends AppCompatActivity {
                            if( title.equals("Easy") )
                            {
                                Toast.makeText(MainActivity.this, "Clicked Easy", Toast.LENGTH_SHORT).show();
+                               //agent = null;
+                               agent = new SimpleReflexAgent( MainActivity.this );
                                return true;
                            }
                            else if( title.equals("Normal"))
                            {
                                Toast.makeText(MainActivity.this, "Clicked Normal", Toast.LENGTH_SHORT).show();
+                               //agent = null;
+                               agent = new GoalBasedAgent( MainActivity.this );
                                return true;
                            }
                            else if( title.equals("Hard"))
                            {
                                Toast.makeText(MainActivity.this, "Clicked Hard", Toast.LENGTH_SHORT).show();
+                               //agent = null;
+                               agent = new UtilityAgent( MainActivity.this );
                                return true;
                            }
 
@@ -601,7 +608,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static void unsetClickListener( Context context, String player, int id)
     {
-        Handler handler = new Handler( Looper.getMainLooper() );
 
         try
         {
@@ -723,7 +729,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
             }
-        }catch( Exception e )
+        }catch( WindowManager.BadTokenException e)
+        {
+            Toast.makeText(context, "Caught bad token exception while unsetting click listener", Toast.LENGTH_SHORT).show();
+        }
+        catch( Exception e )
         {
             Toast.makeText(context, "Error From Application: "+ e, Toast.LENGTH_SHORT).show();
         }
