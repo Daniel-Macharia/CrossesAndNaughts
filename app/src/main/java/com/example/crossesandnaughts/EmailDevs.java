@@ -7,6 +7,7 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -80,13 +81,28 @@ public class EmailDevs extends AppCompatActivity {
         try {
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE );
 
-            Network net = cm.getActiveNetwork();
+            Network net = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                net = cm.getActiveNetwork();
+            }
 
             if( net != null )
             {
-                NetworkCapabilities netCaps = cm.getNetworkCapabilities( net );
+                NetworkCapabilities netCaps = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    netCaps = cm.getNetworkCapabilities( net );
+                }
 
-                if( netCaps.hasCapability( NetworkCapabilities.NET_CAPABILITY_VALIDATED ) )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    if( netCaps.hasCapability( NetworkCapabilities.NET_CAPABILITY_VALIDATED ) )
+                        return true;
+                }
+
+            }
+            else
+            {
+                NetworkInfo info = cm.getActiveNetworkInfo();
+                if( info.isAvailable() )
                     return true;
             }
         }catch( Exception e )
