@@ -102,8 +102,12 @@ public class EmailDevs extends AppCompatActivity {
             else
             {
                 NetworkInfo info = cm.getActiveNetworkInfo();
-                if( info.isAvailable() )
-                    return true;
+
+                if( info != null )
+                {
+                    if( info.isAvailable() )
+                        return true;
+                }
             }
         }catch( Exception e )
         {
