@@ -6,10 +6,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -57,7 +59,20 @@ public class MainActivity extends AppCompatActivity {
             InternalEnvironmentState.init();
             InternalEnvironmentState.setUserMark("cross");
 
-            agent = new SimpleReflexAgent( MainActivity.this );
+            SharedPreferences p = this.getPreferences( Context.MODE_PRIVATE );
+            int levelId = p.getInt("level", 0);
+
+            switch( levelId )
+            {
+                case 1:
+                    agent = new GoalBasedAgent( MainActivity.this );
+                    break;
+                case 2:
+                    agent = new UtilityAgent( MainActivity.this );
+                    break;
+                default:
+                    agent = new SimpleReflexAgent( MainActivity.this );
+            }
 
             setClickListeners( MainActivity.this );
 
@@ -68,6 +83,17 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Error from Application: " + e, Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private void updateLevel( int levelId )
+    {
+        SharedPreferences p = MainActivity.this.getPreferences( Context.MODE_PRIVATE );
+
+        SharedPreferences.Editor editor = p.edit();
+        editor.putInt("level", levelId);
+        editor.apply();
+
+        InternalEnvironmentState.refresh();
     }
 
     private void createMenus( View view)
@@ -81,48 +107,60 @@ public class MainActivity extends AppCompatActivity {
 
                 int id = item.getItemId();
 
+                 if( id == R.id.level_easy)
+                {
+                    item.setChecked(true);
+                    Toast.makeText(MainActivity.this, "Clicked Easy", Toast.LENGTH_SHORT).show();
+                    //agent = null;
+                    agent = new SimpleReflexAgent( MainActivity.this );
+
+                    updateLevel( 0 );
+
+                    return true;
+                }
+                else
+                if( id == R.id.level_normal)
+                {
+                    item.setChecked(true);
+                    Toast.makeText(MainActivity.this, "Clicked Normal", Toast.LENGTH_SHORT).show();
+                    //agent = null;
+                    agent = new GoalBasedAgent( MainActivity.this );
+
+                    updateLevel( 1 );
+
+                    return true;
+                }
+                else
+                if( id == R.id.level_hard)
+                {
+                    item.setChecked(true);
+                    Toast.makeText(MainActivity.this, "Clicked Hard", Toast.LENGTH_SHORT).show();
+                    //agent = null;
+                    agent = new UtilityAgent( MainActivity.this );
+
+                    updateLevel( 2 );
+
+                    return true;
+                }
+                else
                 if( id == R.id.item_level )
                 {
-                    Toast.makeText(MainActivity.this, "Clicked level", Toast.LENGTH_SHORT).show();
-                    PopupMenu sub = new PopupMenu( view.getContext(), view );
+                    try
+                    {
+                        Toast.makeText(MainActivity.this, "Clicked level", Toast.LENGTH_SHORT).show();
 
-                   sub.getMenu().add("Easy").setCheckable(true).setChecked(true);
-                   sub.getMenu().add("Normal").setCheckable(true);
-                   sub.getMenu().add("Hard").setCheckable(true);
+                        SubMenu sub = item.getSubMenu(); //.addSubMenu("sub menu");
 
-                   sub.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                       @Override
-                       public boolean onMenuItemClick(MenuItem item) {
+                        SharedPreferences p = MainActivity.this.getPreferences( Context.MODE_PRIVATE );
+                        int level = p.getInt("level", 0);
 
-                           String title = item.getTitle().toString();
 
-                           if( title.equals("Easy") )
-                           {
-                               Toast.makeText(MainActivity.this, "Clicked Easy", Toast.LENGTH_SHORT).show();
-                               //agent = null;
-                               agent = new SimpleReflexAgent( MainActivity.this );
-                               return true;
-                           }
-                           else if( title.equals("Normal"))
-                           {
-                               Toast.makeText(MainActivity.this, "Clicked Normal", Toast.LENGTH_SHORT).show();
-                               //agent = null;
-                               agent = new GoalBasedAgent( MainActivity.this );
-                               return true;
-                           }
-                           else if( title.equals("Hard"))
-                           {
-                               Toast.makeText(MainActivity.this, "Clicked Hard", Toast.LENGTH_SHORT).show();
-                               //agent = null;
-                               agent = new UtilityAgent( MainActivity.this );
-                               return true;
-                           }
 
-                           return true;
-                       }
-                   });
-
-                   sub.show();
+                        sub.getItem(level).setChecked(true);
+                    }catch( Exception e )
+                    {
+                        Toast.makeText(MainActivity.this, "error: " + e, Toast.LENGTH_SHORT).show();
+                    }
 
                     return true;
                 }
@@ -140,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity( emailIntent );
                     return true;
                 }
+
 
                 return false;
 

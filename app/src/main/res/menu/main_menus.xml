@@ -6,7 +6,22 @@
         android:title="Level"
         >
         <menu>
+            <item
+                android:id="@+id/level_easy"
+                android:title="Easy"
+                android:checkable="true"
+                />
 
+            <item
+                android:id="@+id/level_normal"
+                android:title="Normal"
+                android:checkable="true"
+                />
+            <item
+                android:id="@+id/level_hard"
+                android:title="Hard"
+                android:checkable="true"
+                />
         </menu>
     </item>
     <item
@@ -19,4 +34,4 @@
         android:title="Contact Developers"
         />
 
-</menu>
+</menu >

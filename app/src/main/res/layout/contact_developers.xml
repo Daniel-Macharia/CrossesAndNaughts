@@ -34,17 +34,23 @@
             >
 
             <EditText
+                android:id="@+id/title"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:inputType="textAutoComplete"
-                android:textSize="16sp"
-                android:hint="Email Title"
+                android:textSize="20sp"
+                android:hint="Email Subject"
                 android:textColorHint="@color/grey"
                 android:textColor="@color/blue"
+                android:background="@drawable/rect"
+                android:backgroundTint="@color/cream"
+                android:padding="8dp"
+                android:layout_margin="4dp"
                 />
 
             <Button
+                android:id="@+id/send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/green"
@@ -54,16 +60,20 @@
         </LinearLayout>
 
         <EditText
+            android:id="@+id/message"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="5"
             android:hint="Enter Email Body here..."
             android:inputType="textMultiLine|textAutoComplete"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textColor="@color/blue"
             android:textColorHint="@color/grey"
             android:padding="8dp"
             android:gravity="start|top"
+            android:background="@drawable/rect"
+            android:backgroundTint="@color/cream"
+            android:layout_margin="4dp"
             />
 
 

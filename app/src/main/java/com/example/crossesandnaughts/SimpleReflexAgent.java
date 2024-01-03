@@ -106,6 +106,9 @@ class GoalBasedAgent extends SimpleReflexAgent
 
     public boolean isBlank( int id )
     {
+        if( id < 1 )
+            return false;
+
         Position p = InternalEnvironmentState.getPosition( id );
 
         if( InternalEnvironmentState.marks[ p.getRow()][p.getCol()].equals("blank") )
@@ -197,19 +200,18 @@ class GoalBasedAgent extends SimpleReflexAgent
 
         return -1;
     }
-    public void getPossibleWins()
+    public ArrayList<Possible> getPossibleWins(String player)
     {
+        ArrayList<Possible> possible_wins = new ArrayList<Possible>();
         try
         {
-            possibleWins = new ArrayList<Possible>();
-
             ArrayList<Integer> list = new ArrayList<>();
 
             for( int r = 0; r < InternalEnvironmentState.marks.length; r++)
             {
                 for( int c = 0; c < InternalEnvironmentState.marks[r].length; c++)
                 {
-                    if( InternalEnvironmentState.marks[r][c].equals( InternalEnvironmentState.getPlayerMark("agent") ) )
+                    if( InternalEnvironmentState.marks[r][c].equals( InternalEnvironmentState.getPlayerMark(player) ) )
                         list.add( InternalEnvironmentState.getId( new Position( r, c) ) );
 
                 }
@@ -224,7 +226,7 @@ class GoalBasedAgent extends SimpleReflexAgent
 
                     if( areAligned( id1, id2 ) && isBlank( getThird( id1, id2 ) ) )
                     {
-                        possibleWins.add( new Possible( id1, id2) );
+                        possible_wins.add( new Possible( id1, id2) );
                     }
 
                 }
@@ -234,11 +236,13 @@ class GoalBasedAgent extends SimpleReflexAgent
             Toast.makeText(context, "Error from App: " + e, Toast.LENGTH_SHORT).show();
         }
 
+        return possible_wins;
+
     }
 
     public ArrayList<Integer> getMarks()
     {
-        ArrayList<Integer> marks = new ArrayList<>();
+        ArrayList<Integer> mark = new ArrayList<>();
         String agentMark = InternalEnvironmentState.getPlayerMark( "agent" );
         for( int r = 0; r < InternalEnvironmentState.marks.length; r++)
         {
@@ -246,12 +250,12 @@ class GoalBasedAgent extends SimpleReflexAgent
             {
                 if( InternalEnvironmentState.marks[r][c].equals( agentMark ) )
                 {
-                    marks.add( InternalEnvironmentState.getId( new Position( r, c ) ) );
+                    mark.add( InternalEnvironmentState.getId( new Position( r, c ) ) );
                 }
             }
         }
 
-        return marks;
+        return mark;
     }
 
     public int getNext( int firstId )
@@ -261,9 +265,11 @@ class GoalBasedAgent extends SimpleReflexAgent
             if( firstId == i )
                 continue;
 
-            if( isBlank(i) && areAligned( firstId, i ) && isBlank( getThird( firstId, i) ) )
+            int third = getThird( firstId, i);
+
+            if( isBlank(i) && areAligned( firstId, i ) && isBlank( third ) )
             {
-                return i;
+                return third;
             }
         }
 
@@ -275,7 +281,7 @@ class GoalBasedAgent extends SimpleReflexAgent
     {
         try
         {
-            getPossibleWins();
+            possibleWins = getPossibleWins("agent");
             ArrayList<Integer> agentMarks = getMarks();
 
             if( possibleWins.size() > 0 )
@@ -285,10 +291,13 @@ class GoalBasedAgent extends SimpleReflexAgent
                 {
                     id = getThird( p.id1, p.id2 );
                     if( isBlank( id ) )
-                        break;
+                    {
+                        super.updateAndCheckIfGameIsOver( context, id);
+                        return;
+                    }
                 }
 
-                updateAndCheckIfGameIsOver( context, id);
+
             }
             else if( agentMarks.size() > 0 )
             {
@@ -298,15 +307,16 @@ class GoalBasedAgent extends SimpleReflexAgent
                 {
                     id = getNext( i );
                     if( isBlank( id ) )
-                        break;
+                    {
+                        super.updateAndCheckIfGameIsOver( context, id);
+                        return;
+                    }
                 }
 
-                updateAndCheckIfGameIsOver( context, id);
             }
-            else
-            {
-                super.play();
-            }
+
+            super.play();
+
 
         }catch( Exception e )
         {
@@ -331,7 +341,38 @@ class UtilityAgent extends GoalBasedAgent
     {
         try
         {
-            Toast.makeText( context , "Utility agent playing...invoking goal agent's play() method", Toast.LENGTH_SHORT).show();
+            //Toast.makeText( context , "Utility agent playing...invoking goal agent's play() method", Toast.LENGTH_SHORT).show();
+
+            ArrayList<Possible> opponentPossibleWins = super.getPossibleWins("user");
+            ArrayList<Possible> myPossibleWins = super.getPossibleWins("agent");
+
+            if(myPossibleWins.size() > 0 )
+            {
+                for( Possible p : myPossibleWins )
+                {
+                    int id = super.getThird( p.id1, p.id2 );
+
+                    if( super.isBlank( id ) )
+                    {
+                        super.updateAndCheckIfGameIsOver( context, id);
+                        return;
+                    }
+                }
+            }
+            else
+                if( opponentPossibleWins.size() > 0 )
+            {
+                for( Possible p : opponentPossibleWins )
+                {
+                    int id = super.getThird( p.id1, p.id2 );
+
+                    if( super.isBlank( id ) )
+                    {
+                        super.updateAndCheckIfGameIsOver( context, id);
+                        return;
+                    }
+                }
+            }
 
             super.play();
         }catch( Exception e )
