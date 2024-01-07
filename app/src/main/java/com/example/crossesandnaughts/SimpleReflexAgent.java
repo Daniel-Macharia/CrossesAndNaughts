@@ -1,8 +1,12 @@
 package com.example.crossesandnaughts;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,20 +57,41 @@ public class SimpleReflexAgent {
             if( InternalEnvironmentState.gameOver( context ) )
             {
                 String s = "Game Over!\n\n";
+
                 if( InternalEnvironmentState.userWon )
+                {
                     s += "You Win!";
+                    MainActivity.totalGamesWon++;
+                }
                 else if( InternalEnvironmentState.agentWon )
                     s += "You Loose!";
                 else
                     s += "We Draw!";
 
+                MainActivity.totalGamesPlayed++;
+
+                if( MainActivity.exceededHighScore( context, MainActivity.totalGamesPlayed, MainActivity.totalGamesWon ) ) {
+
+                    InternalEnvironmentState.refresh();
+                    return;
+                }
+
                 Dialog d = new Dialog( context );
                 TextView tv = new TextView( context );
                 tv.setBackgroundColor( android.view.ViewGroup.LayoutParams.MATCH_PARENT );
                 tv.setTextColor( context.getResources().getColor(R.color.black) );
+
                 tv.setText( s );
+
                 d.setContentView( tv );
                 d.show();
+
+                tv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        d.dismiss();
+                    }
+                });
 
                 d.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override

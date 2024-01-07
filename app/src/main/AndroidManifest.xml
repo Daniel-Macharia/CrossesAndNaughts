@@ -17,6 +17,7 @@
 
         <activity android:name=".EmailDevs"></activity>
         <activity android:name=".Help"></activity>
+        <activity android:name=".Scores"></activity>
 
         <activity
             android:name=".MainActivity"
