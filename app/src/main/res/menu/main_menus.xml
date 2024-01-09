@@ -25,10 +25,6 @@
         </menu>
     </item>
     <item
-        android:id="@+id/item_scores"
-        android:title="Scores"
-        />
-    <item
         android:id="@+id/item_high_score"
         android:title="High Score"
         />

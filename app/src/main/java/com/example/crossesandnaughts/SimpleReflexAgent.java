@@ -100,6 +100,9 @@ public class SimpleReflexAgent {
                     }
                 });
             }
+
+            MainActivity.current_scores.setText("wins\n" + MainActivity.totalGamesWon + " / " + MainActivity.totalGamesPlayed);
+
         }catch( Exception e )
         {
             Toast.makeText(context, "Error from application: " + e , Toast.LENGTH_SHORT).show();

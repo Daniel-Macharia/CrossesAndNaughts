@@ -6,15 +6,19 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.android.material.tabs.TabLayout;
 
 public class Scores  extends AppCompatActivity {
 
-    private TextView ten, twenty, fifty, percentTen, percentTwenty, percentFifty;
-    private LinearProgressIndicator seekTen, seekTwenty, seekFifty;
+
+    private TabLayout level_tabs;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -22,52 +26,59 @@ public class Scores  extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.scores );
 
-        ten = findViewById( R.id.tenGames );
-        twenty = findViewById( R.id.twentyGames );
-        fifty = findViewById( R.id.fiftyGames );
+        try {
 
-        percentTen = findViewById( R.id.percentTen );
-        percentTwenty = findViewById( R.id.percentTwenty );
-        percentFifty = findViewById( R.id.percentFifty );
+            level_tabs = findViewById( R.id.tab_layout );
+            viewPager = findViewById( R.id.view_pager );
 
-        seekTen = findViewById( R.id.seekTen );
-        seekTwenty = findViewById( R.id.seekTwenty );
-        seekFifty = findViewById( R.id.seekFifty );
+            TabLayout.Tab tabEasy = level_tabs.newTab();
+            TabLayout.Tab tabNormal = level_tabs.newTab();
+            TabLayout.Tab tabHard = level_tabs.newTab();
 
-        String tenString = "", twentyString = "", fiftyString = "";
+            tabEasy.setText("Easy");
+            tabNormal.setText("Normal");
+            tabHard.setText("Hard");
 
-        double total_ten = 10, total_twenty = 20, total_fifty = 50;
-        double wins_ten, wins_twenty, wins_fifty;
+            level_tabs.addTab( tabEasy);
+            level_tabs.addTab( tabNormal );
+            level_tabs.addTab( tabHard );
 
-        double percent_ten = 0, percent_twenty = 0, percent_fifty = 0;
+            PagerAdapter adapter = new PagerAdapter( getSupportFragmentManager(), level_tabs.getTabCount() );
+            viewPager.setAdapter( adapter );
 
-        wins_ten = MainActivity.p.getInt(MainActivity.winsTen, 0);
-        wins_twenty = MainActivity.p.getInt( MainActivity.winsTwenty, 0);
-        wins_fifty = MainActivity.p.getInt(MainActivity.winsFifty, 0);
+            viewPager.addOnPageChangeListener( new TabLayout.TabLayoutOnPageChangeListener( level_tabs ) );
 
-        percent_ten = wins_ten / total_ten * 100;
-        percent_twenty = wins_twenty / total_twenty * 100;
-        percent_fifty = wins_fifty / total_fifty * 100;
+            level_tabs.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    switch( tab.getPosition() )
+                    {
+                        case 0:
+                            viewPager.setCurrentItem( 0 );
+                            break;
+                        case 1:
+                            viewPager.setCurrentItem( 1 );
+                            break;
+                        case 2:
+                            viewPager.setCurrentItem( 2 );
+                            break;
+                    }
+                }
 
-        seekTen.setProgress( (int)percent_ten );
-        seekTwenty.setProgress( (int)percent_twenty );
-        seekFifty.setProgress( (int)percent_fifty );
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
 
-        percentTen.setText( (int)percent_ten + "%");
-        percentTwenty.setText( (int)percent_twenty + "%");
-        percentFifty.setText( (int)percent_fifty + "%");
+                }
 
-        tenString += "\t\tTen in a row\n\n" + (int)wins_ten + " games won out of " + (int)total_ten;
-                //"\nYou have won  " + (int)percent_ten + "% of the games.";
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
 
-        twentyString += "\t\tTwenty in a row\n\n" + (int)wins_twenty + " games won out of " + (int)total_twenty;
-               // "\nYou have won  " + (int)percent_twenty + "% of the games.";
+                }
+            });
 
-        fiftyString += "\t\tFifty in a row\n\n" + (int)wins_fifty + " games won out of " + (int)total_fifty;
-                //"\nYou have won  " + (int)percent_fifty + "% of the games.";
-
-        ten.setText( tenString );
-        twenty.setText( twentyString );
-        fifty.setText( fiftyString );
+        }catch( Exception e )
+        {
+            Toast.makeText(this, "Error from Application: " + e, Toast.LENGTH_SHORT).show();
+        }
     }
 }

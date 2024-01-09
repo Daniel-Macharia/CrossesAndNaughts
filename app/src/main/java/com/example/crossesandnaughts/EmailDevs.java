@@ -43,7 +43,6 @@ public class EmailDevs extends AppCompatActivity {
                 title.setText("");
                 message.setText("");
 
-                Toast.makeText(EmailDevs.this, "Title: " + titleText + "\n\nBody: " + bodyText, Toast.LENGTH_SHORT).show();
                 sendEmail(titleText, bodyText);
             }
         });
