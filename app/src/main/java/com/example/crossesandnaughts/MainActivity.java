@@ -29,7 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
     private String level = "level";
     public static int totalGamesPlayed, totalGamesWon;
-    public static String winsTen = "winsTen", winsTwenty = "winsTwenty", winsFifty = "winsFifty";
+    public static String winsTenEasy = "winsTenEasy", winsTwentyEasy = "winsTwentyEasy", winsFiftyEasy = "winsFiftyEasy";
+
+    public static String winsTenNormal = "winsTenNormal", winsTwentyNormal = "winsTwentyNormal", winsFiftyNormal = "winsFiftyNormal";
+
+    public static String winsTenHard = "winsTenHard", winsTwentyHard = "winsTwentyHard", winsFiftyHard = "winsFiftyHard";
 
     private ImageView menu;
 
@@ -109,12 +113,28 @@ public class MainActivity extends AppCompatActivity {
             String val = "New High Score!\n\n";
 
             double total_ten = 10, total_twenty = 20, total_fifty = 50;
-            double wins_ten, wins_twenty, wins_fifty;
+            double wins_ten = 0, wins_twenty = 0, wins_fifty = 0;
             double percentage = 0;
 
-            wins_ten = p.getInt(winsTen, 0);
-            wins_twenty = p.getInt( winsTwenty, 0);
-            wins_fifty = p.getInt(winsFifty, 0);
+            int level = p.getInt("level", 0);
+            switch ( level )
+            {
+                case 0:
+                    wins_ten = p.getInt(winsTenEasy, 0);
+                    wins_twenty = p.getInt( winsTwentyEasy, 0);
+                    wins_fifty = p.getInt(winsFiftyEasy, 0);
+                    break;
+                case 1:
+                    wins_ten = p.getInt(winsTenNormal, 0);
+                    wins_twenty = p.getInt( winsTwentyNormal, 0);
+                    wins_fifty = p.getInt(winsFiftyNormal, 0);
+                    break;
+                case 2:
+                    wins_ten = p.getInt(winsTenHard, 0);
+                    wins_twenty = p.getInt( winsTwentyHard, 0);
+                    wins_fifty = p.getInt(winsFiftyHard, 0);
+                    break;
+            }
 
             if( totalGames > 0 )
             {
@@ -129,21 +149,21 @@ public class MainActivity extends AppCompatActivity {
                 {
                     exceeded = true;
                     val += "you've won " + totalWins + " games out of " + totalGames + "\n\nThat's " + (int)percentage + "% of the games";
-                    editor.putInt( winsTen, totalWins);
-                    editor.apply();
 
-                    if( percentage <= 35 )
+                    if( level == 0 )
                     {
-                        val += "\n\nWell Done!";
+                        editor.putInt( winsTenEasy, totalWins);
                     }
-                    else if( percentage <= 70 )
+                    else if( level == 1 )
                     {
-                        val += "\n\nYou're a smart guy!";
+                        editor.putInt( winsTenNormal, totalWins);
                     }
-                    else if( percentage > 70 )
+                    else if( level == 2 )
                     {
-                        val += "\n\nGenius!";
+                        editor.putInt( winsTenHard, totalWins);
                     }
+
+                    editor.apply();
 
                 }
             }
@@ -153,21 +173,21 @@ public class MainActivity extends AppCompatActivity {
                {
                    exceeded = true;
                    val += "you've won " + totalWins + " games out of " + totalGames + "\n\nThat's " + (int)percentage + "% of the games";
-                   editor.putInt( winsTwenty, totalWins);
-                   editor.apply();
 
-                   if( percentage <= 35 )
+                   if( level == 0 )
                    {
-                       val += "\n\nWell Done!";
+                       editor.putInt( winsTwentyEasy, totalWins);
                    }
-                   else if( percentage <= 70 )
+                   else if( level == 1 )
                    {
-                       val += "\n\nYou're a smart guy!";
+                       editor.putInt( winsTwentyNormal, totalWins);
                    }
-                   else if( percentage > 70 )
+                   else if( level == 2 )
                    {
-                       val += "\n\nGenius!";
+                       editor.putInt( winsTwentyHard, totalWins);
                    }
+
+                   editor.apply();
 
                }
             }
@@ -177,23 +197,40 @@ public class MainActivity extends AppCompatActivity {
                 {
                     exceeded = true;
                     val += "you've won " + totalWins + " games out of " + totalGames + "\n\nThat's " + (int)percentage + "% of the games";
-                    editor.putInt( winsFifty, totalWins);
-                    editor.apply();
 
-                    if( percentage <= 35 )
+                    if( level == 0 )
                     {
-                        val += "\n\nWell Done!";
+                        editor.putInt( winsFiftyEasy, totalWins);
                     }
-                    else if( percentage <= 70 )
+                    else if( level == 1 )
                     {
-                        val += "\n\nYou're a smart guy!";
+                        editor.putInt( winsFiftyNormal, totalWins);
                     }
-                    else if( percentage > 70 )
+                    else if( level == 2 )
                     {
-                        val += "\n\nGenius!";
+                        editor.putInt( winsFiftyHard, totalWins);
                     }
+
+                    editor.apply();
                     
                 }
+
+                totalGamesPlayed = 0;
+                totalGamesWon = 0;
+
+            }
+
+            if( percentage <= 35 )
+            {
+                val += "\n\nWell Done!";
+            }
+            else if( percentage <= 70 )
+            {
+                val += "\n\nYou're a smart guy!";
+            }
+            else if( percentage > 70 )
+            {
+                val += "\n\nGenius!";
             }
 
             if( exceeded )
@@ -227,6 +264,9 @@ public class MainActivity extends AppCompatActivity {
     {
         editor.putInt("level", levelId);
         editor.apply();
+
+        totalGamesPlayed = 0;
+        totalGamesWon = 0;
 
         InternalEnvironmentState.refresh();
     }
