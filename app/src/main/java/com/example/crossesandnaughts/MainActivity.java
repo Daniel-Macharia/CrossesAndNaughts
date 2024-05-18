@@ -8,16 +8,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -340,6 +335,11 @@ public class MainActivity extends AppCompatActivity {
 
                         return true;
                     }
+                    else if( id == R.id.item_multiplayer )
+                    {
+                        initMultiplayer();
+                        return true;
+                    }
                     else if( id == R.id.item_high_score )
                     {
                         Intent intent = new Intent( MainActivity.this, Scores.class );
@@ -371,6 +371,12 @@ public class MainActivity extends AppCompatActivity {
         {
             Toast.makeText(this, "Error from app: " + e, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void initMultiplayer()
+    {
+        Intent intent = new Intent(  MainActivity.this, MultiplayerActivity.class);
+        startActivity( intent );
     }
 
     public static void resetGame( Context context )

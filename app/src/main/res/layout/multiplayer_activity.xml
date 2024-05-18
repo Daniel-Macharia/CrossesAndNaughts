@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".MultiplayerActivity"
+    android:background="@color/cream2"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Welcome to multiplayer!"
+        android:textSize="24sp"
+        android:textColor="@color/blue"
+        android:gravity="center"
+        android:background="@drawable/rect"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Please select a device"
+            android:textSize="24sp"
+            android:textColor="@color/blue"
+            android:background="@drawable/rect"
+            android:backgroundTint="@color/cream"
+            android:layout_margin="4dp"
+            android:padding="2dp"
+
+            />
+
+        <LinearLayout
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:gravity="start|center"
+            android:orientation="vertical"
+            android:background="@drawable/rect"
+            android:backgroundTint="@color/cream"
+            >
+
+            <ListView
+                android:id="@+id/device_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@color/grey"
+                android:dividerHeight="2dp"
+                />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/scan_device"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="Turn Bluetooth"
+            android:layout_margin="4dp"
+            android:padding="2dp"
+            android:background="@color/green"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
