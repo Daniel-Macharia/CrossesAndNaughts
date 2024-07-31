@@ -283,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
     {
         try {
             PopupMenu menus = new PopupMenu( view.getContext(), view);
+
             menus.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -337,7 +338,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else if( id == R.id.item_multiplayer )
                     {
-                        initMultiplayer();
+                        Toast.makeText(getApplicationContext(), "I'm sorry, this feature is not yet available.", Toast.LENGTH_SHORT).show();
+                        //initMultiplayer();
                         return true;
                     }
                     else if( id == R.id.item_high_score )

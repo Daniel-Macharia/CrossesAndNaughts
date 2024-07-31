@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical"
+    android:background="@color/white"
     >
 
     <LinearLayout
@@ -28,7 +29,7 @@
             android:layout_height="match_parent"
             android:layout_weight="8"
             android:textSize="32sp"
-            android:textColor="@color/black"
+            android:textColor="@color/blue"
             android:text="Tic-Tac-Toe"
             android:gravity="center"
             />
@@ -69,6 +70,7 @@
                 android:layout_weight="1"
                 android:padding="8dp"
                 android:src="@drawable/blank"
+                android:background="@color/cream"
                 />
 
             <ImageView
@@ -78,6 +80,7 @@
                 android:layout_weight="1"
                 android:padding="8dp"
                 android:src="@drawable/blank"
+                android:background="@color/cream"
                 />
 
             <ImageView
@@ -87,6 +90,7 @@
                 android:layout_weight="1"
                 android:padding="8dp"
                 android:src="@drawable/blank"
+                android:background="@color/cream"
                 />
 
         </LinearLayout>
@@ -106,6 +110,7 @@
                 android:layout_weight="1"
                 android:padding="8dp"
                 android:src="@drawable/blank"
+                android:background="@color/cream"
                 />
 
             <ImageView
@@ -115,6 +120,7 @@
                 android:layout_weight="1"
                 android:padding="8dp"
                 android:src="@drawable/blank"
+                android:background="@color/cream"
                 />
 
             <ImageView
@@ -124,6 +130,7 @@
                 android:layout_weight="1"
                 android:padding="8dp"
                 android:src="@drawable/blank"
+                android:background="@color/cream"
                 />
 
         </LinearLayout>
@@ -143,6 +150,7 @@
                 android:layout_weight="1"
                 android:padding="8dp"
                 android:src="@drawable/blank"
+                android:background="@color/cream"
                 />
 
             <ImageView
@@ -152,6 +160,7 @@
                 android:layout_weight="1"
                 android:padding="8dp"
                 android:src="@drawable/blank"
+                android:background="@color/cream"
                 />
 
             <ImageView
@@ -161,6 +170,7 @@
                 android:layout_weight="1"
                 android:padding="8dp"
                 android:src="@drawable/blank"
+                android:background="@color/cream"
                 />
 
         </LinearLayout>

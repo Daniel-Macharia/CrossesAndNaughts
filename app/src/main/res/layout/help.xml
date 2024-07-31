@@ -14,9 +14,10 @@
         android:layout_weight="1"
         android:text="Need help ?"
         android:textSize="24sp"
-        android:textColor="@color/black"
+        android:textColor="@color/blue"
         android:gravity="center"
         android:padding="8dp"
+        android:textStyle="bold"
         />
 
     <ScrollView

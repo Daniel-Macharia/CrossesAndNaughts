@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/cream"
     android:orientation="vertical">
 
     <LinearLayout
@@ -12,13 +13,26 @@
         android:layout_weight="3"
         android:gravity="center"
         android:orientation="vertical"
+        android:layout_margin="8dp"
+        android:background="@color/white"
         >
 
         <TextView
             android:id="@+id/tenGames"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="1"
+            android:textSize="24sp"
+            android:textColor="@color/blue"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/tenGamesText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:textSize="24sp"
             android:textColor="@color/blue"
             android:gravity="center"
@@ -38,7 +52,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textColor="@color/green"
+                android:textColor="@color/blue"
                 android:textSize="24sp"
                 android:gravity="center"
                 />
@@ -50,7 +64,7 @@
                 android:layout_weight="4"
                 android:padding="8dp"
                 app:trackThickness="24dp"
-                app:indicatorColor="@color/green"
+                app:indicatorColor="@color/blue"
                 app:trackColor="@color/cream"
                 app:trackCornerRadius="4dp"
                 />
@@ -64,16 +78,29 @@
         android:layout_weight="3"
         android:gravity="center"
         android:orientation="vertical"
+        android:layout_margin="8dp"
+        android:background="@color/white"
         >
 
         <TextView
             android:id="@+id/twentyGames"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:gravity="center"
             android:textSize="24sp"
             android:textColor="@color/blue"
+            android:padding="8dp"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/twentyGamesText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textSize="24sp"
+            android:textColor="@color/blue"
+            android:gravity="center"
             android:padding="8dp"
             />
         <LinearLayout
@@ -90,7 +117,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textColor="@color/green"
+                android:textColor="@color/blue"
                 android:textSize="24sp"
                 android:gravity="center"
                 />
@@ -102,7 +129,7 @@
                 android:layout_weight="4"
                 android:padding="8dp"
                 app:trackThickness="24dp"
-                app:indicatorColor="@color/green"
+                app:indicatorColor="@color/blue"
                 app:trackColor="@color/cream"
                 app:trackCornerRadius="4dp"
                 />
@@ -116,16 +143,29 @@
         android:layout_weight="3"
         android:gravity="center"
         android:orientation="vertical"
+        android:layout_margin="8dp"
+        android:background="@color/white"
         >
 
         <TextView
             android:id="@+id/fiftyGames"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:gravity="center"
             android:textSize="24sp"
             android:textColor="@color/blue"
+            android:padding="8dp"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/fiftyGamesText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textSize="24sp"
+            android:textColor="@color/blue"
+            android:gravity="center"
             android:padding="8dp"
             />
         <LinearLayout
@@ -142,7 +182,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textColor="@color/green"
+                android:textColor="@color/blue"
                 android:textSize="24sp"
                 android:gravity="center"
                 />
@@ -154,7 +194,7 @@
                 android:layout_weight="4"
                 android:padding="8dp"
                 app:trackThickness="24dp"
-                app:indicatorColor="@color/green"
+                app:indicatorColor="@color/blue"
                 app:trackColor="@color/cream"
                 app:trackCornerRadius="4dp"
                 />

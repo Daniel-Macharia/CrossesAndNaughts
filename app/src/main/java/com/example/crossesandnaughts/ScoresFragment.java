@@ -13,7 +13,7 @@ import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 public class ScoresFragment extends Fragment {
 
-    private TextView ten, twenty, fifty, percentTen, percentTwenty, percentFifty;
+    private TextView ten,tenText, twenty, twentyText, fifty, fiftyText, percentTen, percentTwenty, percentFifty;
     private LinearProgressIndicator seekTen, seekTwenty, seekFifty;
 
     private int index;
@@ -49,6 +49,10 @@ public class ScoresFragment extends Fragment {
             seekTwenty = v.findViewById( R.id.seekTwenty );
             seekFifty = v.findViewById( R.id.seekFifty );
 
+            tenText = v.findViewById(R.id.tenGamesText);
+            twentyText = v.findViewById( R.id.twentyGamesText );
+            fiftyText = v.findViewById( R.id.fiftyGamesText );
+
             initFragmentData( index );
 
 
@@ -71,6 +75,7 @@ public class ScoresFragment extends Fragment {
         try
         {
             String tenString = "", twentyString = "", fiftyString = "";
+            String tenTextString = "", twentyTextString = "", fiftyTextString = "";
 
             double total_ten = 10, total_twenty = 20, total_fifty = 50;
             double wins_ten = 0, wins_twenty = 0, wins_fifty = 0;
@@ -108,18 +113,26 @@ public class ScoresFragment extends Fragment {
             percentTwenty.setText( (int)percent_twenty + "%");
             percentFifty.setText( (int)percent_fifty + "%");
 
-            tenString += "\t\tTen in a row\n\n" + (int)wins_ten + " games won out of " + (int)total_ten;
+            tenString += "Ten in a row";
+            tenTextString += (int)wins_ten + " games won out of " + (int)total_ten;
             //"\nYou have won  " + (int)percent_ten + "% of the games.";
 
-            twentyString += "\t\tTwenty in a row\n\n" + (int)wins_twenty + " games won out of " + (int)total_twenty;
+            twentyString += "Twenty in a row";
+            twentyTextString += (int)wins_twenty + " games won out of " + (int)total_twenty;
             // "\nYou have won  " + (int)percent_twenty + "% of the games.";
 
-            fiftyString += "\t\tFifty in a row\n\n" + (int)wins_fifty + " games won out of " + (int)total_fifty;
+            fiftyString += "Fifty in a row";
+            fiftyTextString += (int)wins_fifty + " games won out of " + (int)total_fifty;
             //"\nYou have won  " + (int)percent_fifty + "% of the games.";
 
             ten.setText( tenString );
+            tenText.setText( tenTextString );
+
             twenty.setText( twentyString );
+            twentyText.setText( twentyTextString );
+
             fifty.setText( fiftyString );
+            fiftyText.setText( fiftyTextString );
         }catch( Exception e )
         {
             Toast.makeText( getContext(), "Error from app: " + e, Toast.LENGTH_SHORT).show();

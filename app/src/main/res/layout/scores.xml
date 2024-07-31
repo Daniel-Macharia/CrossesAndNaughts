@@ -13,10 +13,11 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:text="Here are your High Scores"
-        android:textColor="@color/black"
+        android:textColor="@color/blue"
         android:textSize="24sp"
         android:gravity="center"
         android:background="@color/cream"
+        android:textStyle="bold"
         />
 
     <com.google.android.material.tabs.TabLayout
